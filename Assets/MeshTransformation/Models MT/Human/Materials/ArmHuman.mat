@@ -225,7 +225,7 @@ Material:
     - _TransNormalDistortion: 0.095
     - _TransScattering: 2
     - _TransShadow: 0.279
-    - _Transformation: 0.878
+    - _Transformation: 1
     - _Transformation_: 0
     - _Translucency: 6.5
     - _UVSec: 0

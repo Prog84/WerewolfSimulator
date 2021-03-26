@@ -142,7 +142,7 @@ Material:
     - _SpecularHighlights: 0
     - _SrcBlend: 1
     - _Str: 0.19
-    - _Transformation: 0
+    - _Transformation: 0.878
     - _Transformation_: 0
     - _UVSec: 0
     - _ZWrite: 1

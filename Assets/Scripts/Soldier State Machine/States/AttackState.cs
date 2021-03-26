@@ -41,7 +41,7 @@ public class AttackState : State
             targetPosition = _soldier.Target.transform.position;
         else
             targetPosition = _targetBody.bounds.center;
-        _mover.AimAt(targetPosition);
+        _mover.RotateTo(targetPosition);
         if (_lastAttackTime <= 0)
         {
             Attack(_soldier.Target.transform.position);

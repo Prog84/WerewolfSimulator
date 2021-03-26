@@ -8,38 +8,41 @@ public class UnitMover : MonoBehaviour
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _rotationSpeed;
 
-    private Vector3 _targetPosition;
-    private float _distanseCheck = 0.3f;
-    private Coroutine _patrolling;
-    //private Rigidbody rb;
+    public float RotationBoost;
 
-    public bool IsMoving => _targetReached == false;
-    private bool _targetReached => Vector3.Distance(transform.position, _targetPosition) < _distanseCheck;
+    private Vector3 _targetPosition;
+    private Quaternion _targetRotation;
+    private float _distanseCheck = 0.3f;
+    private float _rotationCheck = 5f;
+    private Coroutine _patrolling;
+
+    public bool IsMoving => _positionReached == false || _rotationReached == false;
+    public bool IsWalking => _positionReached == false;
+    private bool _positionReached => Vector3.Distance(transform.position, _targetPosition) < _distanseCheck;
+    private bool _rotationReached => Quaternion.Angle(transform.rotation, _targetRotation) < _rotationCheck;
 
     private void Awake()
     {
-        //rb = GetComponent<Rigidbody>();
         _targetPosition = transform.position;
+        _targetRotation = transform.rotation;
+        RotationBoost = 1;
     }
 
-    public void StepTo(Vector3 targetPosition)
+    public void AimTo(Quaternion targetRotation)
     {
-        Vector3 direction = (targetPosition - transform.position).normalized;
-        direction.y = 0;
-        transform.rotation = (Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * _rotationSpeed));
-        transform.position = Vector3.Lerp(transform.position, transform.position + direction, Time.deltaTime * _moveSpeed);
-    }
-
-    public void AimAt(Vector3 targetPosition)
-    {
-        Vector3 direction = (targetPosition - transform.position).normalized;
-        direction.y = 0;
-        transform.rotation = (Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * _rotationSpeed));
+        transform.rotation = (Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _rotationSpeed * RotationBoost));
     }
 
     public void MoveTo(Vector3 targetPosition)
     {
         _targetPosition = targetPosition;
+        RotateTo(targetPosition);
+    }
+    public void RotateTo(Vector3 targetPosition)
+    {
+        var direction = (targetPosition - transform.position).normalized;
+        direction.y = 0;
+        _targetRotation = Quaternion.LookRotation(direction);
     }
 
     public void Stop()
@@ -47,6 +50,7 @@ public class UnitMover : MonoBehaviour
         if (_patrolling != null)
             StopCoroutine(_patrolling);
         _targetPosition = transform.position;
+        _targetRotation = transform.rotation;
     }
     public void Patrol(Vector3[] path)
     {
@@ -62,7 +66,7 @@ public class UnitMover : MonoBehaviour
             for (var i = 0; i<path.Length; i++)
             {
                 MoveTo(path[i]);
-                while (_targetReached == false)
+                while (IsMoving)
                 {
                     yield return new WaitForSeconds(1);
                 }
@@ -72,10 +76,20 @@ public class UnitMover : MonoBehaviour
 
     private void Update()
     {
-        if (_targetReached == false)
+        if (_positionReached == false)
         {
             StepTo(_targetPosition);
         }
+        if (_rotationReached == false)
+        {
+            AimTo(_targetRotation);
+        }
+    }
+    private void StepTo(Vector3 targetPosition)
+    {
+        Vector3 direction = (targetPosition - transform.position).normalized;
+        direction.y = 0;
+        transform.position = Vector3.Lerp(transform.position, transform.position + direction, Time.deltaTime * _moveSpeed);
     }
 
 }

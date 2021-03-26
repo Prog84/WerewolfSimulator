@@ -32,8 +32,7 @@ public class SoldierAnimator : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //Vector3.Distance(_lastPosition, transform.position) >= _minWalkSpeed * Time.deltaTime////////////////////////////////////////////////
-        if (_mover.IsMoving)
+        if (_mover.IsWalking)
             _animator.SetFloat("Speed", 1);
         else
             _animator.SetFloat("Speed", 0);
