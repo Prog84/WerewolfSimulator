@@ -76,7 +76,21 @@ public class PatrollingState : State
         }
         else
         {
-            return ConvertPath(_path);
+            var path = ConvertPath(_path);
+            List<float> distanses = new List<float>();
+            var nearestPointIndex = 0;
+            for (var i = 0; i < path.Length; i++)
+            {
+                distanses.Add(Vector3.Distance(transform.position, path[i]));
+                if (distanses[nearestPointIndex] > distanses[i])
+                    nearestPointIndex = i;
+            }
+            var sortedPath = new Vector3[path.Length];
+            for (var i = 0; i < path.Length; i++)
+            {
+                sortedPath[i] = path[(i + nearestPointIndex) % path.Length];
+            }
+            return sortedPath;
         }
     }
 }
