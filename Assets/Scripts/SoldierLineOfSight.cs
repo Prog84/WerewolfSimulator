@@ -22,7 +22,7 @@ public class SoldierLineOfSight : MonoBehaviour
         _viewMesh = new Mesh { name = "View Mesh" };
         GetComponent<MeshFilter>().mesh = _viewMesh;
         _meshRenderer = GetComponent<MeshRenderer>();
-        StartCoroutine(FindTargetsWithDelay(.2f));
+        StartCoroutine(FindTargetsWithDelay(.3f));
     }
 
     public void SetMaterial(int index)

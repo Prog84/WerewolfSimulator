@@ -6,6 +6,7 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(PlayerMover))]
+[RequireComponent(typeof(Targeter))]
 public class Player : MonoBehaviour
 {
     [SerializeField] private float _MaxHP;
@@ -14,6 +15,7 @@ public class Player : MonoBehaviour
     private Rigidbody _body;
     private CapsuleCollider _collider;
     private PlayerMover _mover;
+    private Targeter _targeter;
 
     public bool InMonsterForm => true;
     public bool IsAlive => _HP > 0;
@@ -37,10 +39,12 @@ public class Player : MonoBehaviour
         _body = GetComponent<Rigidbody>();
         _collider = GetComponent<CapsuleCollider>();
         _mover = GetComponent<PlayerMover>();
+        _targeter = GetComponent<Targeter>();
     }
 
     private void Die()
     {
+        _targeter.enabled = false;
         _body.useGravity = false;
         _collider.enabled = false;
         _mover.enabled = false;
