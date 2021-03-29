@@ -4857,7 +4857,7 @@ GameObject:
   - component: {fileID: 6000713922293731263}
   - component: {fileID: 6000713922293731261}
   - component: {fileID: 6000713922293731251}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Soldier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5022,6 +5022,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _health: 10
   _lineOFSight: {fileID: 2234020800879402517}
+  _muzzleFlash: {fileID: 6157365549626726407, guid: 58451e3a43e4056448eae29b64292dd9,
+    type: 3}
 --- !u!114 &6000713922293731260
 MonoBehaviour:
   m_ObjectHideFlags: 0

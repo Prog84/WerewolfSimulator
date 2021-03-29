@@ -4,16 +4,34 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerMover))]
+[RequireComponent(typeof(Player))]
 public class PlayerAnimator : MonoBehaviour
 {
     private Animator _animator;
     private PlayerMover _mover;
+    private Player _player;
     private float _lastSpeed;
+
+    private void OnEnable()
+    {
+        _player.Died += OnDeath;
+    }
+
+    private void OnDisable()
+    {
+        _player.Died -= OnDeath;
+    }
+
+    private void OnDeath()
+    {
+        _animator.SetTrigger("Die");
+    }
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         _mover = GetComponent<PlayerMover>();
+        _player = GetComponent<Player>();
     }
 
     private void Update()
@@ -30,4 +48,6 @@ public class PlayerAnimator : MonoBehaviour
         _lastSpeed = currentSpeed;
         _animator.SetFloat("Speed", currentSpeed);
     }
+
+
 }

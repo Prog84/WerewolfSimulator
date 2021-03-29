@@ -8,6 +8,7 @@ public class Soldier : MonoBehaviour
 {
     [SerializeField] private int _health;
     [SerializeField] private SoldierLineOfSight _lineOFSight;
+    [SerializeField] private ParticleSystem _muzzleFlash;
 
     private SoldierAnimator _animator;
     private Player _target;
@@ -44,6 +45,7 @@ public class Soldier : MonoBehaviour
         _animator.Shoot();
         Vector3 direction = (target - shootPoint).normalized;
         Instantiate(bullet, shootPoint, Quaternion.LookRotation(direction));
+        Instantiate(_muzzleFlash, shootPoint, Quaternion.LookRotation(direction));
     }
 
     public void SetLineofSightColor(int index)

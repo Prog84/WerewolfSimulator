@@ -15,7 +15,7 @@ public class AttackState : State
     private float _lastAttackTime;
     private Soldier _soldier;
     private UnitMover _mover;
-    private SphereCollider _targetBody;
+    private CapsuleCollider _targetBody;
 
     private void Awake()
     {
@@ -29,7 +29,7 @@ public class AttackState : State
         _soldier.SetAiming(true);
         if (Target != null)
         {
-            if (Target.TryGetComponent(out SphereCollider body))
+            if (Target.TryGetComponent(out CapsuleCollider body))
                 _targetBody = body;
         }
     }
@@ -44,7 +44,7 @@ public class AttackState : State
         _mover.RotateTo(targetPosition);
         if (_lastAttackTime <= 0)
         {
-            Attack(_soldier.Target.transform.position);
+            Attack(targetPosition);
             _lastAttackTime = _delay;
         }
 
