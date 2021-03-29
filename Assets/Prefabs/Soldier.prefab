@@ -1925,7 +1925,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22ee5a4421afcfb4494a5c0d0989c32d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _viewRadius: 10
+  _viewRadius: 9
   _viewAngle: 130
   _targetMask:
     serializedVersion: 2
@@ -4856,7 +4856,10 @@ GameObject:
   - component: {fileID: 6000713922293731256}
   - component: {fileID: 6000713922293731263}
   - component: {fileID: 6000713922293731261}
+  - component: {fileID: 793601840715443111}
   - component: {fileID: 6000713922293731251}
+  - component: {fileID: 2547177127133095366}
+  - component: {fileID: 5559239318468388601}
   m_Layer: 9
   m_Name: Soldier
   m_TagString: Untagged
@@ -5200,10 +5203,24 @@ MonoBehaviour:
   _transitions:
   - {fileID: 6000713922293731251}
   - {fileID: 6000713922293731257}
+  - {fileID: 793601840715443111}
   _damage: 10
   _delay: 0.3
   _bullet: {fileID: 8008533615206238788, guid: f02b084e57a12604dbc46038b231511b, type: 3}
   _shootPoint: {fileID: 2794545083367956047}
+--- !u!114 &793601840715443111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6000713922293731248}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f952901853cd0b47a8186e748e198fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetState: {fileID: 2547177127133095366}
 --- !u!114 &6000713922293731251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5220,6 +5237,34 @@ MonoBehaviour:
   _min: 7
   _max: 100
   _randomSpread: 0
+--- !u!114 &2547177127133095366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6000713922293731248}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd60cd2caacc7d644aa2ee4d61267334, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _transitions:
+  - {fileID: 5559239318468388601}
+--- !u!114 &5559239318468388601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6000713922293731248}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5a339dd1a3dac8459ca614db8ffd2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetState: {fileID: 6000713922293731205}
+  _time: 7
 --- !u!1 &6211890569300354653
 GameObject:
   m_ObjectHideFlags: 0

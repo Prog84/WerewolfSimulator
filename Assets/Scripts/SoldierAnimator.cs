@@ -17,6 +17,11 @@ public class SoldierAnimator : MonoBehaviour
         _animator.SetTrigger("Shoot");
     }
 
+    public void CheckGround()
+    {
+        _animator.SetTrigger("CheckGround");
+    }
+
     private void Awake()
     {
         _animator = GetComponent<Animator>();
