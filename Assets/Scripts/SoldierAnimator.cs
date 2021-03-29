@@ -9,8 +9,6 @@ public class SoldierAnimator : MonoBehaviour
 
     [SerializeField] private float _minWalkSpeed;
 
-    private SoldierAI _ai;
-    private Vector3 _lastPosition;
     private Animator _animator;
     private UnitMover _mover;
 
@@ -25,18 +23,12 @@ public class SoldierAnimator : MonoBehaviour
         _mover = GetComponent<UnitMover>();
     }
 
-    private void Start()
-    {
-        _lastPosition = transform.position;
-    }
-
     private void FixedUpdate()
     {
         if (_mover.IsWalking)
             _animator.SetFloat("Speed", 1);
         else
             _animator.SetFloat("Speed", 0);
-        _lastPosition = transform.position;
     }
 
     public bool GetAiming()
