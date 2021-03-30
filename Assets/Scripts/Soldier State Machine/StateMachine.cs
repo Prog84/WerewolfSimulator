@@ -12,6 +12,13 @@ public class StateMachine : MonoBehaviour
 
     public State Current => _currentState;
 
+
+    private void OnDisable()
+    {
+        foreach (State state in GetComponentsInChildren<State>())
+            state.enabled = false;
+    }
+
     private void Start()
     {
         _target = GetComponent<Soldier>().Target;

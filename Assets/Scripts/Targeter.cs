@@ -16,7 +16,11 @@ public class Targeter : MonoBehaviour
     private List<Transform> _targets;
     private Transform _currentTarget;
 
+    public Transform CurrentTarget => _currentTarget;
+
     public event UnityAction<Transform> TargetChanged;
+
+    public event UnityAction TurnedOFF; 
 
     private void Awake()
     {
@@ -33,6 +37,7 @@ public class Targeter : MonoBehaviour
     private void OnDisable()
     {
         _currentTarget = null;
+        TurnedOFF?.Invoke();
     }
 
     private void FillEnemiesList(Transform box)

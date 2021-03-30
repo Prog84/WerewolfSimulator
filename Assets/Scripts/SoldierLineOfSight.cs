@@ -25,6 +25,18 @@ public class SoldierLineOfSight : MonoBehaviour
         StartCoroutine(FindTargetsWithDelay(.3f));
     }
 
+    private void OnDisable()
+    {
+        if (TryGetComponent(out MeshRenderer mesh))
+            mesh.enabled = false;
+    }
+
+    private void OnEnable()
+    {
+        if (TryGetComponent(out MeshRenderer mesh))
+            mesh.enabled = true;
+    }
+
     public void SetMaterial(int index)
     {
         if( _meshRenderer != null)

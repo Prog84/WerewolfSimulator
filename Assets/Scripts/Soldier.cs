@@ -52,6 +52,27 @@ public class Soldier : MonoBehaviour
     {
         _lineOFSight.SetMaterial(index);
     }
+    public bool GetAiming()
+    {
+        return _animator.GetAiming();
+    }
+
+    public void SetAiming(bool value)
+    {
+        if (_animator!=null)
+            _animator.SetAiming(value);
+    }
+
+    public void GetAttaked(Vector3 attackerPosition)
+    {
+        if(TryGetComponent(out StateMachine machine))
+            machine.enabled = false;
+        if (TryGetComponent(out UnitMover mover))
+            mover.enabled = false;
+        _lineOFSight.enabled = false;
+        FastRotate(Quaternion.LookRotation(attackerPosition - transform.position), 0.5f, 0.3f);
+        _animator.Attacked();
+    }
 
     private void Awake()
     {
@@ -63,21 +84,27 @@ public class Soldier : MonoBehaviour
 
     private void Update()
     {
-        if (SeesTarget && _target !=null)
+        if (SeesTarget && _target != null)
         {
             _lastSeenTargetTime = Time.time;
             _lastSeenTargetPosition = _target.transform.position;
         }
     }
 
-    public bool GetAiming()
+    private void FastRotate(Quaternion rotation, float time, float delay)
     {
-        return _animator.GetAiming();
+        StartCoroutine(RotateDelay(rotation, time, delay));
     }
 
-    public void SetAiming(bool value)
+    private IEnumerator RotateDelay(Quaternion rotation, float time, float delay)
     {
-        if (_animator!=null)
-            _animator.SetAiming(value);
+        yield return new WaitForSeconds(delay);
+        float timer = 0;
+        while (timer <= time)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, timer / time);
+            timer += Time.deltaTime;
+            yield return null;
+        }
     }
 }
