@@ -12,7 +12,8 @@ public class PlayerAnimator : MonoBehaviour
     private PlayerMover _mover;
     private Player _player;
     private PlayerAttacker _attacker;
-    private float _lastSpeed;
+    private float _currentSpeed;
+    private float _speedChangingSpeed = 2f;
 
     private void Awake()
     {
@@ -51,19 +52,10 @@ public class PlayerAnimator : MonoBehaviour
         _animator.SetTrigger("Attack");
     }
 
-    private void Update()
+    private void LateUpdate()
     {
-        UpdateMoveAnimation();
-    }
-
-    private void UpdateMoveAnimation()
-    {
-        float currentSpeed = 0;
-        if (_mover.IsMoving)
-            currentSpeed = _mover.MovingSpeed;
-        currentSpeed += (_lastSpeed - currentSpeed) / 1.1f;
-        _lastSpeed = currentSpeed;
-        _animator.SetFloat("Speed", currentSpeed);
+        _currentSpeed = Mathf.Lerp(_currentSpeed, _mover.MovingSpeed, Time.deltaTime * _speedChangingSpeed);
+        _animator.SetFloat("Speed", _currentSpeed);
     }
 
 

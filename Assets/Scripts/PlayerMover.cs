@@ -4,23 +4,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerSpeedBooster))]
 public class PlayerMover : MonoBehaviour
 {
-    [SerializeField] private float _moveSpeed = 4;
-    [SerializeField] private float _rotateSpeed = 4;
-    [SerializeField] private float _minSpeed = 0.2f;
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _rotateSpeed;
+    [SerializeField] private float _minSpeed;
     [SerializeField] private PlayerInput _input;
 
     private Rigidbody _body;
     private Coroutine _translating;
     private float _translatingSpeed;
+    private PlayerSpeedBooster _booster;
 
+    public float CurrentBoost => _booster.CurrentBoost;
     public float MovingSpeed
     {
         get
         {
             if (_translating == null)
-                return _inputVector.magnitude;
+                return _inputVector.magnitude + _booster.CurrentBoost;
             else
                 return _translatingSpeed;
         }
@@ -86,9 +89,10 @@ public class PlayerMover : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         _body = GetComponent<Rigidbody>();
+        _booster = GetComponent<PlayerSpeedBooster>();
     }
 
     void FixedUpdate()
@@ -96,19 +100,19 @@ public class PlayerMover : MonoBehaviour
         if (IsMoving && _translating == null)
         {
             var direction = new Vector3(_input.Horizontal, 0, _input.Vertical);
-            MoveTo(direction);
-            RotateTo(direction);
+            if(direction.magnitude > _minSpeed)
+                RotateTo(direction);
+            MoveForward();
         }
     }
 
-    private void MoveTo(Vector3 pos)
+    private void MoveForward()
     {
-        _body.MovePosition(Vector3.Lerp(_body.position, _body.position + pos, Time.fixedDeltaTime * _moveSpeed));
+        _body.MovePosition(Vector3.Lerp(_body.position, _body.position + (transform.forward + _inputVector).normalized, Time.fixedDeltaTime * _moveSpeed * _booster.CurrentSpeed));
     }
 
-    private void RotateTo(Vector3 position)
+    private void RotateTo(Vector3 direction)
     {
-        _body.MoveRotation(Quaternion.Slerp(_body.rotation, Quaternion.LookRotation(position), Time.fixedDeltaTime * _rotateSpeed));
+        _body.MoveRotation(Quaternion.Slerp(_body.rotation, Quaternion.LookRotation(direction), Time.fixedDeltaTime * _rotateSpeed * _booster.CurrentRotation));
     }
-
 }
