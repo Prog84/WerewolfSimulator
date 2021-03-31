@@ -39,6 +39,22 @@ public class PlayerMover : MonoBehaviour
         _translating = StartCoroutine(Translate(target, targetRotation, time));
     } 
 
+    public void SetRotation(Vector3 target, float time)
+    {
+        StartCoroutine(Rotate(Quaternion.LookRotation(target - transform.position), time));
+    }
+
+    private IEnumerator Rotate(Quaternion rotation, float time)
+    {
+        float timer = 0;
+        while (timer < time)
+        {
+            timer += Time.deltaTime;
+            _body.MoveRotation(Quaternion.Slerp(_body.rotation, rotation, timer/time));
+            yield return null;
+        }
+    }
+
     private IEnumerator Translate(Vector3 position, Quaternion rotation, float time)
     {
         _translatingSpeed = Vector3.Distance(position, transform.position) / time / _moveSpeed;

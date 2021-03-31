@@ -6,15 +6,16 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Player))]
 public class Targeter : MonoBehaviour
 {
-    [SerializeField] private float _range;
+    [SerializeField] private float _MaxRange;
     [SerializeField] [Range(0, 360)] private float _angle;
     [SerializeField] private Transform _enemiesBox;
     [SerializeField] private LayerMask _obstacleMask;
+    [SerializeField]private Transform _playerTargeter;
 
     private List<Transform> _enemiesList;
-    private Transform _player;
     private List<Transform> _targets;
     private Transform _currentTarget;
+    private float _MinRange;
 
     public Transform CurrentTarget => _currentTarget;
 
@@ -24,9 +25,9 @@ public class Targeter : MonoBehaviour
 
     private void Awake()
     {
-        _player = GetComponent<Transform>();
         _targets = new List<Transform>();
         _enemiesList = new List<Transform>();
+        _MinRange = Vector3.Distance(transform.position, _playerTargeter.position);
     }
 
     private void OnEnable()
@@ -58,11 +59,11 @@ public class Targeter : MonoBehaviour
 
     private bool CheckTargetable(Transform enemy)
     {
-        var distance = Vector3.Distance(enemy.position, _player.position);
-        if (distance <= _range)
+        var distance = Vector3.Distance(enemy.position, _playerTargeter.position);
+        if (_MinRange <= distance && distance <= _MaxRange)
         {
-            var direction = (enemy.position - _player.position).normalized;
-            var angle = Vector3.Angle(_player.forward, direction);
+            var direction = (enemy.position - _playerTargeter.position).normalized;
+            var angle = Vector3.Angle(_playerTargeter.forward, direction);
             if (angle <= _angle/2)
             {
                 if (!Physics.Raycast(transform.position, direction, distance, _obstacleMask))
@@ -81,7 +82,11 @@ public class Targeter : MonoBehaviour
         {
             if (CheckTargetable(enemy))
             {
-                _targets.Add(enemy);
+                if (enemy.TryGetComponent(out Soldier soldier))
+                {
+                    if (soldier.IsAlive)
+                        _targets.Add(enemy);
+                }
             }
         }
     }
@@ -93,7 +98,7 @@ public class Targeter : MonoBehaviour
         int minIndex = 0;
         for (var i = 0; i< _targets.Count; i++)
         {
-            if (Vector3.Distance(_player.position, _targets[i].position) < Vector3.Distance(_player.position, _targets[minIndex].position))
+            if (Vector3.Distance(_playerTargeter.position, _targets[i].position) < Vector3.Distance(_playerTargeter.position, _targets[minIndex].position))
             {
                 minIndex = i;
             }

@@ -7,13 +7,13 @@ public class PlayerInput : MonoBehaviour
 {
     [SerializeField] private Joystick _joystick;
 
+    public bool IsON;
     private Player _player;
-    private bool _isON;
 
     private void Awake()
     {
         _player = GetComponent<Player>();
-        _isON = true;
+        IsON = true;
     }
 
     private void OnEnable()
@@ -30,7 +30,7 @@ public class PlayerInput : MonoBehaviour
     {
         get
         {
-            if (_isON)
+            if (IsON)
                 return _joystick.Horizontal;
             else
                 return 0;
@@ -40,7 +40,7 @@ public class PlayerInput : MonoBehaviour
     {
         get
         {
-            if (_isON)
+            if (IsON)
                 return _joystick.Vertical;
             else
                 return 0;
@@ -49,11 +49,11 @@ public class PlayerInput : MonoBehaviour
 
     public void TurnOff()
     {
-        _isON = false;
+        IsON = false;
     }
 
     public void TurnOn()
     {
-        _isON = true;
+        IsON = true;
     }
 }

@@ -6,7 +6,6 @@ using UnityEngine.Events;
 [RequireComponent(typeof(SoldierAnimator))]
 public class Soldier : MonoBehaviour
 {
-    [SerializeField] private int _health;
     [SerializeField] private SoldierLineOfSight _lineOFSight;
     [SerializeField] private ParticleSystem _muzzleFlash;
 
@@ -14,30 +13,21 @@ public class Soldier : MonoBehaviour
     private Player _target;
     private Vector3 _lastSeenTargetPosition;
     private float _lastSeenTargetTime;
+    private bool _isAlive = true;
 
     public Player Target => _target;
+    public bool IsAlive => _isAlive;
     public bool SeesTarget => _lineOFSight.VisibleTargets.Contains(_target.transform);
 
     public Vector3 LastSeenTargetPosition => _lastSeenTargetPosition;
     public float LastSeenTargetTime => _lastSeenTargetTime;
 
-    public event UnityAction<Soldier> Dying;
+    public event UnityAction<Soldier> Died;
 
 
     public void Init(Player target)
     {
         _target = target;
-    }
-
-    public void TakeDamage(int damage)
-    {
-        _health -= damage;
-
-        if (_health <= 0)
-        {
-            Dying?.Invoke(this);
-            Destroy(gameObject);
-        }
     }
 
     public void Shoot(Vector3 target, GameObject bullet, Vector3 shootPoint)
@@ -63,7 +53,7 @@ public class Soldier : MonoBehaviour
             _animator.SetAiming(value);
     }
 
-    public void GetAttaked(Vector3 attackerPosition)
+    public void GetGrabbed(Vector3 attackerPosition)
     {
         if(TryGetComponent(out StateMachine machine))
             machine.enabled = false;
@@ -71,7 +61,7 @@ public class Soldier : MonoBehaviour
             mover.enabled = false;
         _lineOFSight.enabled = false;
         FastRotate(Quaternion.LookRotation(attackerPosition - transform.position), 0.5f, 0.3f);
-        _animator.Attacked();
+        _animator.Grabbed();
     }
 
     private void Awake()
@@ -106,5 +96,25 @@ public class Soldier : MonoBehaviour
             timer += Time.deltaTime;
             yield return null;
         }
+    }
+
+    private void Die()
+    {
+        if (TryGetComponent(out StateMachine machine))
+            machine.enabled = false;
+        if (TryGetComponent(out UnitMover mover))
+            mover.enabled = false;
+        if (TryGetComponent(out BoxCollider box))
+            box.enabled = false;
+        _lineOFSight.enabled = false;
+        _isAlive = false;
+        Died?.Invoke(this);
+    }
+
+    public void Hit(Transform attacker)
+    {
+        Die();
+        _animator.Fall();
+        transform.rotation =  Quaternion.LookRotation(attacker.position - transform.position);
     }
 }

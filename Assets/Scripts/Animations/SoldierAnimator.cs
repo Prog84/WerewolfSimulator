@@ -12,9 +12,14 @@ public class SoldierAnimator : MonoBehaviour
     private Animator _animator;
     private UnitMover _mover;
 
-    public void Attacked()
+    public void Fall()
     {
-        _animator.SetTrigger("Attacked");
+        _animator.SetTrigger("Fall");
+    }
+
+    public void Grabbed()
+    {
+        _animator.SetTrigger("Grabbed");
     }
 
     public void Shoot()
