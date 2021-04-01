@@ -5,6 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerSpeedBooster))]
+[RequireComponent(typeof(PlayerAttacker))]
 public class PlayerMover : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed;
@@ -16,6 +17,7 @@ public class PlayerMover : MonoBehaviour
     private Coroutine _translating;
     private float _translatingSpeed;
     private PlayerSpeedBooster _booster;
+    private PlayerAttacker _attacker;
 
     public float CurrentBoost => _booster.CurrentBoost;
     public float MovingSpeed
@@ -93,6 +95,7 @@ public class PlayerMover : MonoBehaviour
     {
         _body = GetComponent<Rigidbody>();
         _booster = GetComponent<PlayerSpeedBooster>();
+        _attacker = GetComponent<PlayerAttacker>();
     }
 
     void FixedUpdate()
@@ -100,15 +103,18 @@ public class PlayerMover : MonoBehaviour
         if (IsMoving && _translating == null)
         {
             var direction = new Vector3(_input.Horizontal, 0, _input.Vertical);
-            if(direction.magnitude > _minSpeed)
+            if(direction.magnitude > _minSpeed && _input.IsON)
                 RotateTo(direction);
-            MoveForward();
+            if (_attacker.IsAttacking == false)
+                MoveForward((transform.forward + _inputVector).normalized, _moveSpeed);
+            else
+                MoveForward((transform.forward).normalized, _attacker.AttackRunSpeed);
         }
     }
 
-    private void MoveForward()
+    private void MoveForward(Vector3 direction, float speed)
     {
-        _body.MovePosition(Vector3.Lerp(_body.position, _body.position + (transform.forward + _inputVector).normalized, Time.fixedDeltaTime * _moveSpeed * _booster.CurrentSpeed));
+        _body.MovePosition(Vector3.Lerp(_body.position, _body.position + direction, Time.fixedDeltaTime * speed * _booster.CurrentSpeed));
     }
 
     private void RotateTo(Vector3 direction)

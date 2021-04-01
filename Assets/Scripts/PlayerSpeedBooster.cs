@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(PlayerAttacker))]
 public class PlayerSpeedBooster : MonoBehaviour
 {
     [SerializeField] private float _speedPower;
@@ -14,6 +15,8 @@ public class PlayerSpeedBooster : MonoBehaviour
 
     private Quaternion _lastRotation;
     private PlayerInput _input;
+    private PlayerAttacker _attacker;
+    private float _currentBoost;
 
     public float CurrentBoost => _currentBoost;
     public float CurrentSpeed => Mathf.Lerp(1, _speedPower, _currentBoost);
@@ -21,17 +24,17 @@ public class PlayerSpeedBooster : MonoBehaviour
 
     private float _currentMaxAngle => _maxAngle * CurrentRotation;
 
-    public float _currentBoost;
-    public float delta;
-
     private void Awake()
     {
         _input = GetComponent<PlayerInput>();
+        _attacker = GetComponent<PlayerAttacker>();
     }
     private void FixedUpdate()
     {
+        if (_attacker.IsAttacking)
+            return;
         var angleChange = Quaternion.Angle(_lastRotation, transform.rotation);
-        delta = _currentMaxAngle - angleChange;
+        var delta = _currentMaxAngle - angleChange;
         if (delta > 0 && _input.Direction.magnitude > 0.8f)
         {
             _currentBoost += Mathf.Lerp(0, _charging, delta / _currentMaxAngle * Time.fixedDeltaTime);
