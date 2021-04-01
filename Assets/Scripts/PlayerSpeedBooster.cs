@@ -31,17 +31,18 @@ public class PlayerSpeedBooster : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (_attacker.IsAttacking)
-            return;
-        var angleChange = Quaternion.Angle(_lastRotation, transform.rotation);
-        var delta = _currentMaxAngle - angleChange;
-        if (delta > 0 && _input.Direction.magnitude > 0.8f)
+        if (_attacker.IsAttacking == false)
         {
-            _currentBoost += Mathf.Lerp(0, _charging, delta / _currentMaxAngle * Time.fixedDeltaTime);
-        }
-        else
-        {
-            _currentBoost -= Mathf.Lerp(0, _decaying, Mathf.Abs(delta) / _currentMaxAngle * Time.fixedDeltaTime);
+            var angleChange = Quaternion.Angle(_lastRotation, transform.rotation);
+            var delta = _currentMaxAngle - angleChange;
+            if (delta > 0 && _input.Direction.magnitude > 0.8f)
+            {
+                _currentBoost += Mathf.Lerp(0, _charging, delta / _currentMaxAngle * Time.fixedDeltaTime);
+            }
+            else
+            {
+                _currentBoost -= Mathf.Lerp(0, _decaying, Mathf.Abs(delta) / _currentMaxAngle * Time.fixedDeltaTime);
+            }
         }
         _currentBoost = Mathf.Clamp(_currentBoost, 0, 1);
         _lastRotation = transform.rotation;

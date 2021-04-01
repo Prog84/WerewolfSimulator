@@ -20,17 +20,18 @@ public class PlayerMover : MonoBehaviour
     private PlayerAttacker _attacker;
 
     public float CurrentBoost => _booster.CurrentBoost;
-    public float MovingSpeed
+    public float CurrentSpeed => MovingPower * _moveSpeed;
+    public float MovingPower
     {
         get
         {
-            if (_translating == null)
+            if (_attacker.IsAttacking == false)
                 return _inputVector.magnitude + _booster.CurrentBoost;
             else
-                return _translatingSpeed;
+                return 1 + _booster.CurrentBoost;
         }
     }
-    public bool IsMoving => MovingSpeed > _minSpeed;
+    public bool IsMoving => MovingPower > _minSpeed;
     private Vector3 _inputVector => new Vector3(_input.Horizontal, 0, _input.Vertical);
 
     public void SetPosition(Vector3 target, Vector3 lookTarget, float time)
@@ -105,16 +106,26 @@ public class PlayerMover : MonoBehaviour
             var direction = new Vector3(_input.Horizontal, 0, _input.Vertical);
             if(direction.magnitude > _minSpeed && _input.IsON)
                 RotateTo(direction);
-            if (_attacker.IsAttacking == false)
-                MoveForward((transform.forward + _inputVector).normalized, _moveSpeed);
-            else
-                MoveForward((transform.forward).normalized, _attacker.AttackRunSpeed);
+            MoveForward();
+
         }
     }
 
-    private void MoveForward(Vector3 direction, float speed)
+    private void MoveForward()
     {
-        _body.MovePosition(Vector3.Lerp(_body.position, _body.position + direction, Time.fixedDeltaTime * speed * _booster.CurrentSpeed));
+        Vector3 direction;
+        float speed;
+        if (_attacker.IsAttacking)
+        {
+            direction = (transform.forward).normalized;
+            speed = _attacker.MoveSpeed;
+        }
+        else
+        {
+            direction = (transform.forward + _inputVector).normalized;
+            speed = CurrentSpeed;
+        }
+        _body.MovePosition(Vector3.Lerp(_body.position, _body.position + direction, Time.fixedDeltaTime * speed));
     }
 
     private void RotateTo(Vector3 direction)

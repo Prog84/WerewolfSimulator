@@ -10,14 +10,14 @@ public class PlayerAttacker : MonoBehaviour
 {
     [SerializeField] private Claw _clawRight;
     [SerializeField] private Claw _clawLeft;
+    [SerializeField] private Attack[] _attacks;
 
-    private float _attackRunSpeed;
     private PlayerMover _mover;
     private Targeter _targeter;
     private PlayerInput _input;
     private bool _isAttacking = false;
+    private float _attackSpeed;
     private Coroutine _attacking = null;
-
     public bool IsAttacking 
     {
         get => _isAttacking;
@@ -29,12 +29,16 @@ public class PlayerAttacker : MonoBehaviour
             _input.IsON = !value;
         }
     }
-
-    public float AttackRunSpeed => _attackRunSpeed;
+    public float MoveSpeed => _attackSpeed;
 
     public event UnityAction Grabbed;
-    public event UnityAction Attacked;
-    public event UnityAction AttackedRun;
+    public event UnityAction<AttackSpeed> Attacked;
+
+    public enum AttackSpeed
+    {
+        Slow,
+        Fast
+    }
 
     private void Awake()
     {
@@ -56,42 +60,53 @@ public class PlayerAttacker : MonoBehaviour
             return;
         if (IsAttacking)
             return;
-        var distance = (Vector3.Distance(transform.position, target.position));
-        if (distance > 1.7f && distance < 5f && _mover.MovingSpeed > 1.8f)
+        foreach (Attack attack in _attacks)
         {
-            if (target.TryGetComponent(out Soldier soldier))
-                if (soldier.IsAlive)
-                    AttackOnBoost(soldier);
-        }
-        else if (Vector3.Distance(transform.position, target.position) <= 1.7f)
-        {
-            if (target.TryGetComponent(out Soldier soldier1))
-                if (soldier1.IsAlive)
-                    AttackInPlace(soldier1);
+            if (attack.MinSpeed <= _mover.MovingPower && _mover.MovingPower <= attack.MaxSpeed)
+            {
+                var maxRange = attack.Time * _mover.CurrentSpeed;
+                var distance = (Vector3.Distance(transform.position, target.position));
+                if (distance <= maxRange)
+                {
+                    if (target.TryGetComponent(out Soldier soldier))
+                    {
+                        if (soldier.IsAlive)
+                        {
+                            DoAttack(soldier, attack, Mathf.Clamp(distance - attack.Offset, 0, float.MaxValue) / attack.Time);
+                            return;
+                        }
+                    }
+                }
+            }
         }
     }
 
-    private void AttackInPlace(Soldier target)
+    private void DoAttack(Soldier target, Attack attack, float speed)
     {
+        _attackSpeed = speed;
         IsAttacking = true;
         if (_attacking != null)
             StopCoroutine(_attacking);
-        _attacking = StartCoroutine(AttackA(target));
+        _attacking = StartCoroutine(Attack(target, attack));
     }
 
-    private void AttackOnBoost(Soldier target)
+    private IEnumerator Attack(Soldier target, Attack attack)
     {
         IsAttacking = true;
-        if (_attacking != null)
-            StopCoroutine(_attacking);
-        _attacking = StartCoroutine(AttackB(target));
+        Attacked?.Invoke(attack.AttackSpeed);
+        yield return new WaitForSeconds(attack.PauseClawOn);
+        SetClaws(attack.RightClaw, attack.LeftClaw);
+        yield return new WaitForSeconds(attack.PauseClawOff);
+        SetClaws(false, false);
+        yield return new WaitForSeconds(attack.PauseTargetHit);
+        target.Hit(transform);
+        IsAttacking = false;
+        _attackSpeed = 0;
     }
 
     private IEnumerator AttackA(Soldier target)
     {
         //Time.timeScale = 0.3f;
-        _attackRunSpeed = 2f;
-        Attacked?.Invoke();
         yield return new WaitForSeconds(0.05f);
         SetClaws(true, false);
         yield return new WaitForSeconds(0.38f);
@@ -105,8 +120,6 @@ public class PlayerAttacker : MonoBehaviour
     private IEnumerator AttackB(Soldier target)
     {
         //Time.timeScale = 0.1f;
-        _attackRunSpeed = 4f;
-        AttackedRun?.Invoke();
         yield return new WaitForSeconds(0.3f);
         SetClaws(false, true);
         yield return new WaitForSeconds(0.3f);

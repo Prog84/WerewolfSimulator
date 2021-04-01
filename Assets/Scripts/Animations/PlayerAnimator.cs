@@ -28,7 +28,6 @@ public class PlayerAnimator : MonoBehaviour
         _player.Died += OnDeath;
         _attacker.Grabbed += OnGrab;
         _attacker.Attacked += OnAttack;
-        _attacker.AttackedRun += OnAttackRun;
     }
 
     private void OnDisable()
@@ -36,7 +35,6 @@ public class PlayerAnimator : MonoBehaviour
         _player.Died -= OnDeath;
         _attacker.Grabbed -= OnGrab;
         _attacker.Attacked -= OnAttack;
-        _attacker.AttackedRun -= OnAttackRun;
     }
 
     private void OnDeath()
@@ -49,19 +47,17 @@ public class PlayerAnimator : MonoBehaviour
         _animator.SetTrigger("Grab");
     }
 
-    private void OnAttack()
+    private void OnAttack(PlayerAttacker.AttackSpeed speed)
     {
-        _animator.SetTrigger("Attack");
-    }
-
-    private void OnAttackRun()
-    {
-        _animator.SetTrigger("Attack2");
+        if (speed == PlayerAttacker.AttackSpeed.Slow)
+            _animator.SetTrigger("Attack");
+        if (speed == PlayerAttacker.AttackSpeed.Fast)
+            _animator.SetTrigger("Attack2");
     }
 
     private void LateUpdate()
     {
-        _currentSpeed = Mathf.Lerp(_currentSpeed, _mover.MovingSpeed, Time.deltaTime * _speedChangingSpeed);
+        _currentSpeed = Mathf.Lerp(_currentSpeed, _mover.MovingPower, Time.deltaTime * _speedChangingSpeed);
         _animator.SetFloat("Speed", _currentSpeed);
     }
 
