@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3663322786023984513}
   m_LocalRotation: {x: -0.2961716, y: -0.05496372, z: 0.80241925, w: -0.5151552}
-  m_LocalPosition: {x: -4.13, y: 0, z: 3.09}
+  m_LocalPosition: {x: -3.98, y: 0, z: -4.1}
   m_LocalScale: {x: 0.4444445, y: 0.44444442, z: 0.4444444}
   m_Children:
   - {fileID: 5982707020525021110}
@@ -81,7 +81,7 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 2100000, guid: fb160fb6f3cc4e64796e5256e24dd2d2, type: 2}
+  - {fileID: 2100000, guid: a41befcd1052645eab0cdbb67f201850, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -315,7 +315,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.5754717, g: 0, b: 0, a: 1}
+      maxColor: {r: 1, g: 0.06132078, b: 0.06132078, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -4119,8 +4119,8 @@ ParticleSystem:
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 0.21486014
-          value: 0.20676811
+          time: 0.40384024
+          value: 0.7067681
           inSlope: -1.7654458
           outSlope: -1.7654458
           tangentMode: 0
@@ -4171,7 +4171,7 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 0.7830189, g: 0.23268957, b: 0.23268957, a: 1}
-        key1: {r: 0.5754717, g: 0, b: 0, a: 1}
+        key1: {r: 1, g: 0, b: 0, a: 1}
         key2: {r: 0.6603774, g: 0.13394447, b: 0.13394447, a: 0}
         key3: {r: 0.2735849, g: 0, b: 0, a: 0}
         key4: {r: 0.2735849, g: 0, b: 0, a: 0}
@@ -4199,7 +4199,7 @@ ParticleSystem:
         m_NumAlphaKeys: 3
       minGradient:
         serializedVersion: 2
-        key0: {r: 0.24528301, g: 0, b: 0, a: 1}
+        key0: {r: 1, g: 0, b: 0, a: 1}
         key1: {r: 0.754717, g: 0, b: 0, a: 0}
         key2: {r: 1, g: 1, b: 1, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}

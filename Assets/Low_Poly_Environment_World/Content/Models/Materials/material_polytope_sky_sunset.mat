@@ -20,11 +20,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _AtmosphereThickness: 0
+    - _AtmosphereThickness: 0.1
     - _Exposure: 1.28
     - _SunDisk: 2
-    - _SunSize: 0.45
-    - _SunSizeConvergence: 7.16
+    - _SunSize: 0.21
+    - _SunSizeConvergence: 8.47
     m_Colors:
     - _GroundColor: {r: 0.5849056, g: 0.38596043, b: 0.19037023, a: 1}
     - _SkyTint: {r: 1, g: 1, b: 1, a: 1}

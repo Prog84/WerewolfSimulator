@@ -15,8 +15,8 @@ MonoBehaviour:
   _attackSpeed: 1
   _leftClaw: 1
   _rightClaw: 0
-  _pauseClawOn: 0.3
-  _pauseClawOff: 0.2
+  _pauseClawOn: 0.1
+  _pauseClawOff: 0.5
   _pauseTargetHit: 0.05
   _minSpeed: 1.9
   _maxSpeed: 2
