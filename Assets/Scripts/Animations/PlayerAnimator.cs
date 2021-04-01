@@ -12,7 +12,8 @@ public class PlayerAnimator : MonoBehaviour
     private PlayerMover _mover;
     private Player _player;
     private PlayerAttacker _attacker;
-    private float _lastSpeed;
+    private float _currentSpeed;
+    private float _speedChangingSpeed = 2f;
 
     private void Awake()
     {
@@ -46,25 +47,20 @@ public class PlayerAnimator : MonoBehaviour
         _animator.SetTrigger("Grab");
     }
 
-    private void OnAttack()
+    private void OnAttack(PlayerAttacker.AttackSpeed speed)
     {
-        _animator.SetTrigger("Attack");
+        if (speed == PlayerAttacker.AttackSpeed.Slow)
+            _animator.SetTrigger("Attack");
+        if (speed == PlayerAttacker.AttackSpeed.Fast)
+            _animator.SetTrigger("Attack2");
     }
 
-    private void Update()
+    private void LateUpdate()
     {
-        UpdateMoveAnimation();
+        _currentSpeed = Mathf.Lerp(_currentSpeed, _mover.MovingPower, Time.deltaTime * _speedChangingSpeed);
+        _animator.SetFloat("Speed", _currentSpeed);
     }
 
-    private void UpdateMoveAnimation()
-    {
-        float currentSpeed = 0;
-        if (_mover.IsMoving)
-            currentSpeed = _mover.MovingSpeed;
-        currentSpeed += (_lastSpeed - currentSpeed) / 1.1f;
-        _lastSpeed = currentSpeed;
-        _animator.SetFloat("Speed", currentSpeed);
-    }
 
 
 }

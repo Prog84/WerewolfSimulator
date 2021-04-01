@@ -4,28 +4,34 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerSpeedBooster))]
+[RequireComponent(typeof(PlayerAttacker))]
 public class PlayerMover : MonoBehaviour
 {
-    [SerializeField] private float _moveSpeed = 4;
-    [SerializeField] private float _rotateSpeed = 4;
-    [SerializeField] private float _minSpeed = 0.2f;
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _rotateSpeed;
+    [SerializeField] private float _minSpeed;
     [SerializeField] private PlayerInput _input;
 
     private Rigidbody _body;
     private Coroutine _translating;
     private float _translatingSpeed;
+    private PlayerSpeedBooster _booster;
+    private PlayerAttacker _attacker;
 
-    public float MovingSpeed
+    public float CurrentBoost => _booster.CurrentBoost;
+    public float CurrentSpeed => MovingPower * _moveSpeed;
+    public float MovingPower
     {
         get
         {
-            if (_translating == null)
-                return _inputVector.magnitude;
+            if (_attacker.IsAttacking == false)
+                return _inputVector.magnitude + _booster.CurrentBoost;
             else
-                return _translatingSpeed;
+                return 1 + _booster.CurrentBoost;
         }
     }
-    public bool IsMoving => MovingSpeed > _minSpeed;
+    public bool IsMoving => MovingPower > _minSpeed;
     private Vector3 _inputVector => new Vector3(_input.Horizontal, 0, _input.Vertical);
 
     public void SetPosition(Vector3 target, Vector3 lookTarget, float time)
@@ -86,9 +92,11 @@ public class PlayerMover : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         _body = GetComponent<Rigidbody>();
+        _booster = GetComponent<PlayerSpeedBooster>();
+        _attacker = GetComponent<PlayerAttacker>();
     }
 
     void FixedUpdate()
@@ -96,19 +104,32 @@ public class PlayerMover : MonoBehaviour
         if (IsMoving && _translating == null)
         {
             var direction = new Vector3(_input.Horizontal, 0, _input.Vertical);
-            MoveTo(direction);
-            RotateTo(direction);
+            if(direction.magnitude > _minSpeed && _input.IsON)
+                RotateTo(direction);
+            MoveForward();
+
         }
     }
 
-    private void MoveTo(Vector3 pos)
+    private void MoveForward()
     {
-        _body.MovePosition(Vector3.Lerp(_body.position, _body.position + pos, Time.fixedDeltaTime * _moveSpeed));
+        Vector3 direction;
+        float speed;
+        if (_attacker.IsAttacking)
+        {
+            direction = (transform.forward).normalized;
+            speed = _attacker.MoveSpeed;
+        }
+        else
+        {
+            direction = (transform.forward + _inputVector).normalized;
+            speed = CurrentSpeed;
+        }
+        _body.MovePosition(Vector3.Lerp(_body.position, _body.position + direction, Time.fixedDeltaTime * speed));
     }
 
-    private void RotateTo(Vector3 position)
+    private void RotateTo(Vector3 direction)
     {
-        _body.MoveRotation(Quaternion.Slerp(_body.rotation, Quaternion.LookRotation(position), Time.fixedDeltaTime * _rotateSpeed));
+        _body.MoveRotation(Quaternion.Slerp(_body.rotation, Quaternion.LookRotation(direction), Time.fixedDeltaTime * _rotateSpeed * _booster.CurrentRotation));
     }
-
 }

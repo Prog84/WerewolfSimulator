@@ -8,7 +8,10 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private Joystick _joystick;
 
     public bool IsON;
+
     private Player _player;
+
+    public Vector3 Direction => new Vector3(Horizontal, 0, Vertical);
 
     private void Awake()
     {

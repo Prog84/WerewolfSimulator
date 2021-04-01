@@ -10,16 +10,17 @@ public class PlayerAttacker : MonoBehaviour
 {
     [SerializeField] private Claw _clawRight;
     [SerializeField] private Claw _clawLeft;
+    [SerializeField] private Attack[] _attacks;
 
     private PlayerMover _mover;
     private Targeter _targeter;
     private PlayerInput _input;
-    private bool _isAttacking;
-    private Coroutine _attacking;
-
+    private bool _isAttacking = false;
+    private float _attackSpeed;
+    private Coroutine _attacking = null;
     public bool IsAttacking 
     {
-        get => _isAttacking && _attacking == null;
+        get => _isAttacking;
 
         private set
         {
@@ -28,9 +29,16 @@ public class PlayerAttacker : MonoBehaviour
             _input.IsON = !value;
         }
     }
+    public float MoveSpeed => _attackSpeed;
 
     public event UnityAction Grabbed;
-    public event UnityAction Attacked;
+    public event UnityAction<AttackSpeed> Attacked;
+
+    public enum AttackSpeed
+    {
+        Slow,
+        Fast
+    }
 
     private void Awake()
     {
@@ -52,25 +60,53 @@ public class PlayerAttacker : MonoBehaviour
             return;
         if (IsAttacking)
             return;
-        if (Vector3.Distance(transform.position, target.position) < 1.7f)
-            if (target.TryGetComponent(out Soldier soldier))
-                if (soldier.IsAlive)
-                    Attack(soldier);
+        foreach (Attack attack in _attacks)
+        {
+            if (attack.MinSpeed <= _mover.MovingPower && _mover.MovingPower <= attack.MaxSpeed)
+            {
+                var maxRange = attack.Time * _mover.CurrentSpeed;
+                var distance = (Vector3.Distance(transform.position, target.position));
+                if (distance <= maxRange)
+                {
+                    if (target.TryGetComponent(out Soldier soldier))
+                    {
+                        if (soldier.IsAlive)
+                        {
+                            DoAttack(soldier, attack, Mathf.Clamp(distance - attack.Offset, 0, float.MaxValue) / attack.Time);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    private void Attack(Soldier target)
+    private void DoAttack(Soldier target, Attack attack, float speed)
     {
+        _attackSpeed = speed;
         IsAttacking = true;
         if (_attacking != null)
             StopCoroutine(_attacking);
-        _attacking = StartCoroutine(AttackA(target));
+        _attacking = StartCoroutine(Attack(target, attack));
+    }
+
+    private IEnumerator Attack(Soldier target, Attack attack)
+    {
+        IsAttacking = true;
+        Attacked?.Invoke(attack.AttackSpeed);
+        yield return new WaitForSeconds(attack.PauseClawOn);
+        SetClaws(attack.RightClaw, attack.LeftClaw);
+        yield return new WaitForSeconds(attack.PauseClawOff);
+        SetClaws(false, false);
+        yield return new WaitForSeconds(attack.PauseTargetHit);
+        target.Hit(transform);
+        IsAttacking = false;
+        _attackSpeed = 0;
     }
 
     private IEnumerator AttackA(Soldier target)
     {
         //Time.timeScale = 0.3f;
-        Attacked?.Invoke();
-        //_mover.SetRotation(targetPosition, 0.2f);
         yield return new WaitForSeconds(0.05f);
         SetClaws(true, false);
         yield return new WaitForSeconds(0.38f);
@@ -80,6 +116,21 @@ public class PlayerAttacker : MonoBehaviour
         IsAttacking = false;
         //Time.timeScale = 1.2f;
     }
+
+    private IEnumerator AttackB(Soldier target)
+    {
+        //Time.timeScale = 0.1f;
+        yield return new WaitForSeconds(0.3f);
+        SetClaws(false, true);
+        yield return new WaitForSeconds(0.3f);
+        SetClaws(false, false);
+        target.Hit(transform);
+        yield return new WaitForSeconds(0.2f);
+        IsAttacking = false;
+        //Time.timeScale = 1.0f;
+    }
+
+
 
     private void Update()
     {

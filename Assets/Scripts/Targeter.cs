@@ -10,12 +10,12 @@ public class Targeter : MonoBehaviour
     [SerializeField] [Range(0, 360)] private float _angle;
     [SerializeField] private Transform _enemiesBox;
     [SerializeField] private LayerMask _obstacleMask;
-    [SerializeField]private Transform _playerTargeter;
+    [SerializeField] private Transform _playerTargeter;
 
     private List<Transform> _enemiesList;
     private List<Transform> _targets;
-    private Transform _currentTarget;
-    private float _MinRange;
+    public Transform _currentTarget;
+    private float _minRange;
 
     public Transform CurrentTarget => _currentTarget;
 
@@ -27,7 +27,7 @@ public class Targeter : MonoBehaviour
     {
         _targets = new List<Transform>();
         _enemiesList = new List<Transform>();
-        _MinRange = Vector3.Distance(transform.position, _playerTargeter.position);
+        _minRange = Vector3.Distance(transform.position, _playerTargeter.position);
     }
 
     private void OnEnable()
@@ -60,7 +60,7 @@ public class Targeter : MonoBehaviour
     private bool CheckTargetable(Transform enemy)
     {
         var distance = Vector3.Distance(enemy.position, _playerTargeter.position);
-        if (_MinRange <= distance && distance <= _MaxRange)
+        if (_minRange <= distance && distance <= _MaxRange)
         {
             var direction = (enemy.position - _playerTargeter.position).normalized;
             var angle = Vector3.Angle(_playerTargeter.forward, direction);
