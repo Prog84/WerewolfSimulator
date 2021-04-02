@@ -9,14 +9,14 @@ public class Claw : MonoBehaviour
 
     private Transform _player;
     private SphereCollider _collider;
-    private ParticleSystem.EmissionModule _particle;
+    private ParticleSystem _particle;
 
     public Transform Player => _player;
 
     private void Awake()
     {
         _collider = GetComponent<SphereCollider>();
-        _particle = GetComponent<ParticleSystem>().emission;
+        _particle = GetComponent<ParticleSystem>();
         if (transform.root.TryGetComponent(out Player player))
             _player = player.transform;
     }
@@ -24,13 +24,16 @@ public class Claw : MonoBehaviour
     private void OnEnable()
     {
         _collider.enabled = true;
-        _particle.enabled = true;
+        var emission = _particle.emission;
+        emission.enabled = true;
     }
 
     private void OnDisable()
     {
         _collider.enabled = false;
-        _particle.enabled = false;
+        var emission = _particle.emission;
+        emission.enabled = false;
+        _particle.Clear();
     }
 
     private void OnTriggerEnter(Collider other)

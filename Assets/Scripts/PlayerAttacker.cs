@@ -92,6 +92,7 @@ public class PlayerAttacker : MonoBehaviour
 
     private IEnumerator Attack(Soldier target, Attack attack)
     {
+        Time.timeScale = attack.SlowMotion;
         IsAttacking = true;
         Attacked?.Invoke(attack.AttackSpeed);
         yield return new WaitForSeconds(attack.PauseClawOn);
@@ -102,6 +103,7 @@ public class PlayerAttacker : MonoBehaviour
         target.Hit(transform);
         IsAttacking = false;
         _attackSpeed = 0;
+        Time.timeScale = 1f;
     }
 
     private IEnumerator AttackA(Soldier target)

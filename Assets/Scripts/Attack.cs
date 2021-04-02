@@ -14,6 +14,7 @@ public class Attack : ScriptableObject
     [SerializeField] private float _minSpeed;
     [SerializeField] private float _maxSpeed;
     [SerializeField] private float _offset;
+    [SerializeField] private float _slowMotion;
 
     public float Time =>  _pauseClawOff + PauseClawOn + _pauseTargetHit;
     public bool LeftClaw => _leftClaw;
@@ -26,6 +27,7 @@ public class Attack : ScriptableObject
     public PlayerAttacker.AttackSpeed AttackSpeed => _attackSpeed;
 
     public float Offset => _offset;
+    public float SlowMotion => _slowMotion;
 
 
 }
