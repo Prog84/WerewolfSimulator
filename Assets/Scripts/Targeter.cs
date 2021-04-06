@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(Player))]
+[RequireComponent(typeof(PlayerInput))]
 public class Targeter : MonoBehaviour
 {
     [SerializeField] private float _MaxRange;
@@ -11,10 +12,12 @@ public class Targeter : MonoBehaviour
     [SerializeField] private Transform _enemiesBox;
     [SerializeField] private LayerMask _obstacleMask;
     [SerializeField] private Transform _playerTargeter;
+    [SerializeField] private Transform _rotationPoint;
 
+    private PlayerInput _input;
     private List<Transform> _enemiesList;
     private List<Transform> _targets;
-    public Transform _currentTarget;
+    private Transform _currentTarget;
     private float _minRange;
 
     public Transform CurrentTarget => _currentTarget;
@@ -25,6 +28,7 @@ public class Targeter : MonoBehaviour
 
     private void Awake()
     {
+        _input = GetComponent<PlayerInput>();
         _targets = new List<Transform>();
         _enemiesList = new List<Transform>();
         _minRange = Vector3.Distance(transform.position, _playerTargeter.position);
@@ -53,6 +57,8 @@ public class Targeter : MonoBehaviour
 
     private void Update()
     {
+        if (_input.Direction.magnitude > 0.2f)
+            _rotationPoint.transform.rotation = Quaternion.LookRotation(_input.Direction);
         UpdateTargets();
         UpdateCurrentTarget();
     }

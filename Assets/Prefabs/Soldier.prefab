@@ -1926,7 +1926,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _viewRadius: 9
-  _viewAngle: 130
+  _viewAngle: 164
   _targetMask:
     serializedVersion: 2
     m_Bits: 256
@@ -5008,6 +5008,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lineOFSight: {fileID: 2234020800879402517}
   _muzzleFlash: {fileID: 6157365549626726407, guid: 58451e3a43e4056448eae29b64292dd9,
+    type: 3}
+  _onHitBlood: {fileID: 159818992496638038, guid: 02462e14914631e40b8af3531540d055,
     type: 3}
 --- !u!114 &6000713922293731260
 MonoBehaviour:

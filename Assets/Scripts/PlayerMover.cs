@@ -104,14 +104,16 @@ public class PlayerMover : MonoBehaviour
         if (IsMoving && _translating == null)
         {
             var direction = new Vector3(_input.Horizontal, 0, _input.Vertical);
-            if(direction.magnitude > _minSpeed && _input.IsON)
+            if (direction.magnitude > _minSpeed && _input.IsON)
                 RotateTo(direction);
-            MoveForward();
+            else if (_attacker.IsAttacking)
+                RotateTo(_attacker.CurrentTarget);
+            Move();
 
         }
     }
 
-    private void MoveForward()
+    private void Move()
     {
         Vector3 direction;
         float speed;
@@ -131,5 +133,10 @@ public class PlayerMover : MonoBehaviour
     private void RotateTo(Vector3 direction)
     {
         _body.MoveRotation(Quaternion.Slerp(_body.rotation, Quaternion.LookRotation(direction), Time.fixedDeltaTime * _rotateSpeed * _booster.CurrentRotation));
+    }
+
+    private void RotateTo(Transform target)
+    {
+        _body.MoveRotation(Quaternion.Slerp(_body.rotation, Quaternion.LookRotation(target.position - transform.position), Time.fixedDeltaTime * 10));
     }
 }

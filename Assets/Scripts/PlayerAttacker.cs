@@ -11,6 +11,7 @@ public class PlayerAttacker : MonoBehaviour
     [SerializeField] private Claw _clawRight;
     [SerializeField] private Claw _clawLeft;
     [SerializeField] private Attack[] _attacks;
+    [SerializeField] private float _runAttackTime;
 
     private PlayerMover _mover;
     private Targeter _targeter;
@@ -18,6 +19,7 @@ public class PlayerAttacker : MonoBehaviour
     private bool _isAttacking = false;
     private float _attackSpeed;
     private Coroutine _attacking = null;
+    private Transform _currentTarget;
     public bool IsAttacking 
     {
         get => _isAttacking;
@@ -30,6 +32,7 @@ public class PlayerAttacker : MonoBehaviour
         }
     }
     public float MoveSpeed => _attackSpeed;
+    public Transform CurrentTarget => _currentTarget;
 
     public event UnityAction Grabbed;
     public event UnityAction<AttackSpeed> Attacked;
@@ -62,21 +65,10 @@ public class PlayerAttacker : MonoBehaviour
             return;
         foreach (Attack attack in _attacks)
         {
-            if (attack.MinSpeed <= _mover.MovingPower && _mover.MovingPower <= attack.MaxSpeed)
+            if (CheckAttackAvalable(attack, target, out Soldier targetSoldier, out float distance))
             {
-                var maxRange = attack.Time * _mover.CurrentSpeed;
-                var distance = (Vector3.Distance(transform.position, target.position));
-                if (distance <= maxRange)
-                {
-                    if (target.TryGetComponent(out Soldier soldier))
-                    {
-                        if (soldier.IsAlive)
-                        {
-                            DoAttack(soldier, attack, Mathf.Clamp(distance - attack.Offset, 0, float.MaxValue) / attack.Time);
-                            return;
-                        }
-                    }
-                }
+                DoAttack(targetSoldier, attack, Mathf.Clamp(distance - attack.Offset, 0, float.MaxValue) / attack.Time);
+                return;
             }
         }
     }
@@ -85,6 +77,7 @@ public class PlayerAttacker : MonoBehaviour
     {
         _attackSpeed = speed;
         IsAttacking = true;
+        _currentTarget = target.transform;
         if (_attacking != null)
             StopCoroutine(_attacking);
         _attacking = StartCoroutine(Attack(target, attack));
@@ -102,37 +95,38 @@ public class PlayerAttacker : MonoBehaviour
         yield return new WaitForSeconds(attack.PauseTargetHit);
         target.Hit(transform);
         IsAttacking = false;
+        _currentTarget = null;
         _attackSpeed = 0;
         Time.timeScale = 1f;
     }
 
-    private IEnumerator AttackA(Soldier target)
+    private bool CheckAttackAvalable(Attack attack, Transform target, out Soldier targetSoldier, out float distance)
     {
-        //Time.timeScale = 0.3f;
-        yield return new WaitForSeconds(0.05f);
-        SetClaws(true, false);
-        yield return new WaitForSeconds(0.38f);
-        SetClaws(false, false);
-        target.Hit(transform);
-        yield return new WaitForSeconds(0.4f);
-        IsAttacking = false;
-        //Time.timeScale = 1.2f;
+        targetSoldier = null;
+        distance = 0;
+        if (attack.MinSpeed <= _mover.MovingPower && _mover.MovingPower <= attack.MaxSpeed)
+        {
+            var maxRange = attack.Time * _mover.CurrentSpeed;
+            distance = (Vector3.Distance(transform.position, target.position));
+            if (distance <= maxRange)
+            {
+                if (target.TryGetComponent(out targetSoldier))
+                {
+                    if (targetSoldier.IsAlive)
+                    {
+                        if (attack.AttackSpeed == AttackSpeed.Fast)
+                        {
+                            if ((Time.time - _runAttackTime) < 1.5f)
+                                return false;
+                            _runAttackTime = Time.time;
+                        }
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
-
-    private IEnumerator AttackB(Soldier target)
-    {
-        //Time.timeScale = 0.1f;
-        yield return new WaitForSeconds(0.3f);
-        SetClaws(false, true);
-        yield return new WaitForSeconds(0.3f);
-        SetClaws(false, false);
-        target.Hit(transform);
-        yield return new WaitForSeconds(0.2f);
-        IsAttacking = false;
-        //Time.timeScale = 1.0f;
-    }
-
-
 
     private void Update()
     {

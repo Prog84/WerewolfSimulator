@@ -8,6 +8,7 @@ public class Soldier : MonoBehaviour
 {
     [SerializeField] private SoldierLineOfSight _lineOFSight;
     [SerializeField] private ParticleSystem _muzzleFlash;
+    [SerializeField] private ParticleSystem _onHitBlood;
 
     private SoldierAnimator _animator;
     private Player _target;
@@ -116,5 +117,6 @@ public class Soldier : MonoBehaviour
         Die();
         _animator.Fall();
         transform.rotation =  Quaternion.LookRotation(attacker.position - transform.position);
+        Instantiate(_onHitBlood, transform.position + new Vector3(0,attacker.position.y,0), Quaternion.LookRotation(transform.forward));
     }
 }

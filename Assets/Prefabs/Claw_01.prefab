@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 3663322786023984513}
   m_LocalRotation: {x: -0.2961716, y: -0.05496372, z: 0.80241925, w: -0.5151552}
   m_LocalPosition: {x: -3.98, y: 0, z: -4.1}
-  m_LocalScale: {x: 0.4444445, y: 0.44444442, z: 0.4444444}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5982707020525021110}
   m_Father: {fileID: 0}
@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 423cfd19c49011b4b8136b424dc54dcf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _blood: {fileID: 159818992496638038, guid: 02462e14914631e40b8af3531540d055, type: 3}
+  _blood: {fileID: 4914235630693027198, guid: de3d813f37f8e8d4eadc450f581a905e, type: 3}
 --- !u!199 &2652632069107990694
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -208,8 +208,8 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.85
-      minScalar: 0.36
+      scalar: 5
+      minScalar: 5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -693,7 +693,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 1000
+    maxNumParticles: 1
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -839,7 +839,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 1
+      value: 0.2
       mode: 0
       spread: 0
       speed:
@@ -958,7 +958,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 1000
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -1011,7 +1011,7 @@ ParticleSystem:
     rateOverDistance:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3851,7 +3851,7 @@ ParticleSystem:
     subEmitters:
     - serializedVersion: 3
       emitter: {fileID: 2764670200174239176}
-      type: 0
+      type: 4
       properties: 0
       emitProbability: 1
   LightsModule:
