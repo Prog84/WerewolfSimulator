@@ -20,6 +20,7 @@ public class PlayerAttacker : MonoBehaviour
     private float _attackSpeed;
     private Coroutine _attacking = null;
     private Transform _currentTarget;
+    private bool _isLeftSide;
     public bool IsAttacking 
     {
         get => _isAttacking;
@@ -31,11 +32,11 @@ public class PlayerAttacker : MonoBehaviour
             _input.IsON = !value;
         }
     }
-    public float MoveSpeed => _attackSpeed;
+    public float AttackMovingSpeed => _attackSpeed;
     public Transform CurrentTarget => _currentTarget;
 
     public event UnityAction Grabbed;
-    public event UnityAction<AttackSpeed> Attacked;
+    public event UnityAction<AttackSpeed, bool> Attacked;
 
     public enum AttackSpeed
     {
@@ -75,25 +76,31 @@ public class PlayerAttacker : MonoBehaviour
 
     private void DoAttack(Soldier target, Attack attack, float speed)
     {
-        _attackSpeed = speed;
-        IsAttacking = true;
-        _currentTarget = target.transform;
         if (_attacking != null)
+        {
             StopCoroutine(_attacking);
+            IsAttacking = false;
+            _currentTarget = null;
+            _attackSpeed = 0;
+            Time.timeScale = 1f;
+        }
+        _attackSpeed = speed;
+        _isLeftSide = !_isLeftSide;
+        _currentTarget = target.transform;
+        IsAttacking = true;
+        Attacked?.Invoke(attack.AttackSpeed, _isLeftSide);
         _attacking = StartCoroutine(Attack(target, attack));
     }
 
     private IEnumerator Attack(Soldier target, Attack attack)
     {
         Time.timeScale = attack.SlowMotion;
-        IsAttacking = true;
-        Attacked?.Invoke(attack.AttackSpeed);
         yield return new WaitForSeconds(attack.PauseClawOn);
-        SetClaws(attack.RightClaw, attack.LeftClaw);
+        SetClaws(!_isLeftSide, _isLeftSide);
         yield return new WaitForSeconds(attack.PauseClawOff);
         SetClaws(false, false);
         yield return new WaitForSeconds(attack.PauseTargetHit);
-        target.Hit(transform);
+        target.Hit(transform.position);
         IsAttacking = false;
         _currentTarget = null;
         _attackSpeed = 0;
@@ -104,9 +111,10 @@ public class PlayerAttacker : MonoBehaviour
     {
         targetSoldier = null;
         distance = 0;
-        if (attack.MinSpeed <= _mover.MovingPower && _mover.MovingPower <= attack.MaxSpeed)
+        var speed = _mover.CurrentBoost + 1;
+        if (attack.MinSpeed <= speed && speed <= attack.MaxSpeed)
         {
-            var maxRange = attack.Time * _mover.CurrentSpeed;
+            var maxRange = attack.Time * _mover.CurrentMovingSpeed;
             distance = (Vector3.Distance(transform.position, target.position));
             if (distance <= maxRange)
             {
@@ -116,7 +124,7 @@ public class PlayerAttacker : MonoBehaviour
                     {
                         if (attack.AttackSpeed == AttackSpeed.Fast)
                         {
-                            if ((Time.time - _runAttackTime) < 1.5f)
+                            if ((Time.time - _runAttackTime) < 1.0f)
                                 return false;
                             _runAttackTime = Time.time;
                         }
@@ -132,32 +140,5 @@ public class PlayerAttacker : MonoBehaviour
     {
         if (IsAttacking == false)
             TryAttack(_targeter.CurrentTarget);
-    }
-
-    private void Grab()
-    {
-        if (_targeter.CurrentTarget == null)
-            return;
-        Grabbed?.Invoke();
-        SetClaws(true, true);
-        var target = _targeter.CurrentTarget.GetComponent<Soldier>();
-        _targeter.enabled = false;
-        _input.TurnOff();
-        var attackPosition = GetAttackPosition(target.transform, 2.5f);
-        _mover.SetPosition(attackPosition, target.transform.position, 0.3f);
-        target.GetGrabbed(attackPosition);
-        _mover.StickToPosition(GetEnemyFallPosition(target.transform, 1.7f), 1f, 1f);
-    }
-
-    private Vector3 GetAttackPosition(Transform target, float attackDistance)
-    {
-        var path = target.position - transform.position;
-        return transform.position + path.normalized * (path.magnitude - attackDistance);
-    }
-
-    private Vector3 GetEnemyFallPosition(Transform target, float falldistance)
-    {
-        var path = target.position - transform.position;
-        return transform.position + path.normalized * (path.magnitude + falldistance);
     }
 }

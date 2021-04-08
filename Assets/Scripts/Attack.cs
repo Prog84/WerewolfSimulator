@@ -6,8 +6,6 @@ using UnityEngine;
 public class Attack : ScriptableObject
 {
     [SerializeField] private PlayerAttacker.AttackSpeed _attackSpeed;
-    [SerializeField] private bool _leftClaw;
-    [SerializeField] private bool _rightClaw;
     [SerializeField] private float _pauseClawOn;
     [SerializeField] private float _pauseClawOff;
     [SerializeField] private float _pauseTargetHit;
@@ -17,8 +15,6 @@ public class Attack : ScriptableObject
     [SerializeField] private float _slowMotion;
 
     public float Time =>  _pauseClawOff + PauseClawOn + _pauseTargetHit;
-    public bool LeftClaw => _leftClaw;
-    public bool RightClaw => _rightClaw;
     public float MinSpeed => _minSpeed;
     public float MaxSpeed => _maxSpeed;
     public float PauseClawOn => _pauseClawOn;

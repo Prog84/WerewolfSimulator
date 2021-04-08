@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(PlayerMover))]
 [RequireComponent(typeof(Targeter))]
@@ -16,7 +15,6 @@ public class Player : MonoBehaviour
 
     private float _HP;
     private float _rage;
-    private Rigidbody _body;
     private CapsuleCollider _collider;
     private PlayerMover _mover;
     private Targeter _targeter;
@@ -29,6 +27,14 @@ public class Player : MonoBehaviour
     public event UnityAction Died;
     public event UnityAction<float> HealthChanged;
     public event UnityAction<float> RageChanged;
+    public event UnityAction Hit;
+
+    public void HitFront()
+    {
+        _mover.enabled = false;
+        Hit?.Invoke();
+        StartCoroutine(StepBack(2.5f, 0.9f));
+    }
 
     public void TakeDamage(float damage)
     {
@@ -57,7 +63,6 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        _body = GetComponent<Rigidbody>();
         _collider = GetComponent<CapsuleCollider>();
         _mover = GetComponent<PlayerMover>();
         _targeter = GetComponent<Targeter>();
@@ -68,9 +73,8 @@ public class Player : MonoBehaviour
     private void Die()
     {
         _targeter.enabled = false;
-        _body.useGravity = false;
-        _collider.enabled = false;
         _mover.enabled = false;
+        this.enabled = false;
         Died?.Invoke();
     }
     private void Start()
@@ -106,5 +110,18 @@ public class Player : MonoBehaviour
             RageChanged?.Invoke(_rage);
             yield return null;
         }
+    }
+
+    private IEnumerator StepBack(float distanse, float time)
+    {
+        var timer = 0f;
+        var targetPos = transform.position - transform.forward * distanse;
+        while (timer <= time)
+        {
+            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 10);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        _mover.enabled = true;
     }
 }

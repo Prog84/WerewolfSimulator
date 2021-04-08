@@ -16,7 +16,7 @@ public class PlayerSpeedBooster : MonoBehaviour
     private Quaternion _lastRotation;
     private PlayerInput _input;
     private PlayerAttacker _attacker;
-    private float _currentBoost;
+    public float _currentBoost;//
 
     public float CurrentBoost => _currentBoost;
     public float CurrentSpeed => Mathf.Lerp(1, _speedPower, _currentBoost);
@@ -29,7 +29,7 @@ public class PlayerSpeedBooster : MonoBehaviour
         _input = GetComponent<PlayerInput>();
         _attacker = GetComponent<PlayerAttacker>();
     }
-    private void FixedUpdate()
+    private void Update()
     {
         if (_attacker.IsAttacking == false)
         {
@@ -37,13 +37,15 @@ public class PlayerSpeedBooster : MonoBehaviour
             var delta = _currentMaxAngle - angleChange;
             if (delta > 0 && _input.Direction.magnitude > 0.8f)
             {
-                _currentBoost += Mathf.Lerp(0, _charging, delta / _currentMaxAngle * Time.fixedDeltaTime);
+                _currentBoost += Mathf.Lerp(0, _charging, delta / _currentMaxAngle * Time.deltaTime);
             }
             else
             {
-                _currentBoost -= Mathf.Lerp(0, _decaying, Mathf.Abs(delta) / _currentMaxAngle * Time.fixedDeltaTime);
+                _currentBoost -= Mathf.Lerp(0, _decaying, Mathf.Abs(delta) / _currentMaxAngle * Time.deltaTime);
             }
         }
+        else
+            _currentBoost -= _decaying * Time.deltaTime / 30;
         _currentBoost = Mathf.Clamp(_currentBoost, 0, 1);
         _lastRotation = transform.rotation;
     }

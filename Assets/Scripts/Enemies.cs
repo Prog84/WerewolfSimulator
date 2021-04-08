@@ -6,6 +6,8 @@ using UnityEngine.Events;
 public class Enemies : MonoBehaviour
 {
     [SerializeField] private Player _player;
+    [SerializeField] private PopupsSpawner _effectSpawner;
+    [SerializeField] private Popup _killEffect;
 
     private List<Soldier> _enemies;
 
@@ -27,5 +29,6 @@ public class Enemies : MonoBehaviour
         _enemies.Remove(enemy);
         Died?.Invoke();
         _player.RiseRage(10);
+        _effectSpawner.SpawnPopup(_killEffect, enemy.transform.position);
     }
 }

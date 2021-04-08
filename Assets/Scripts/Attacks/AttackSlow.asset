@@ -13,12 +13,10 @@ MonoBehaviour:
   m_Name: AttackSlow
   m_EditorClassIdentifier: 
   _attackSpeed: 0
-  _leftClaw: 0
-  _rightClaw: 1
   _pauseClawOn: 0.05
   _pauseClawOff: 0.5
   _pauseTargetHit: 0
   _minSpeed: 0
   _maxSpeed: 2
-  _offset: 0.3
+  _offset: 0.4
   _slowMotion: 1

@@ -42,7 +42,7 @@ public class Claw : MonoBehaviour
         {
             Instantiate(_blood, (transform.position + other.bounds.center) / 2, Quaternion.LookRotation(other.bounds.center - transform.position));
             if(soldier.IsAlive)
-                soldier.Hit(_player);
+                soldier.Hit(_player.position);
         }
     }
 }

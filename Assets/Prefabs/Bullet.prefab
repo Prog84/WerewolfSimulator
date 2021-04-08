@@ -14085,8 +14085,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _damage: 1
-  _speed: 30
+  _speed: 8
   _blood: {fileID: 159818992496638038, guid: 0c6aefd5800771444a0d63d53797a942, type: 3}
+  _lifeTime: 5
 --- !u!135 &-3326164820885705497
 SphereCollider:
   m_ObjectHideFlags: 0

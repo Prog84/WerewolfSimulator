@@ -8,12 +8,14 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerAttacker))]
 public class PlayerAnimator : MonoBehaviour
 {
+    [SerializeField] private float _maxRunAnimationSpeedBoost;
+
     private Animator _animator;
     private PlayerMover _mover;
     private Player _player;
     private PlayerAttacker _attacker;
     private float _currentSpeed;
-    private float _speedChangingSpeed = 2f;
+    private float _speedChangingSpeed = 3f;
 
     private void Awake()
     {
@@ -28,6 +30,7 @@ public class PlayerAnimator : MonoBehaviour
         _player.Died += OnDeath;
         _attacker.Grabbed += OnGrab;
         _attacker.Attacked += OnAttack;
+        _player.Hit += OnHitFront;
     }
 
     private void OnDisable()
@@ -35,11 +38,14 @@ public class PlayerAnimator : MonoBehaviour
         _player.Died -= OnDeath;
         _attacker.Grabbed -= OnGrab;
         _attacker.Attacked -= OnAttack;
+        _player.Hit -= OnHitFront;
     }
 
     private void OnDeath()
     {
         _animator.SetTrigger("Die");
+        _animator.SetBool("IsAlive", false);
+        this.enabled = false;
     }
 
     private void OnGrab()
@@ -47,18 +53,25 @@ public class PlayerAnimator : MonoBehaviour
         _animator.SetTrigger("Grab");
     }
 
-    private void OnAttack(PlayerAttacker.AttackSpeed speed)
+    private void OnAttack(PlayerAttacker.AttackSpeed speed, bool isLeftSide)
     {
+        _animator.SetBool("Side", isLeftSide);
         if (speed == PlayerAttacker.AttackSpeed.Slow)
-            _animator.SetTrigger("Attack");
+            _animator.SetTrigger("AttackSlow");
         if (speed == PlayerAttacker.AttackSpeed.Fast)
-            _animator.SetTrigger("Attack2");
+            _animator.SetTrigger("AttackFast");
+    }
+
+    private void OnHitFront()
+    {
+        _animator.SetTrigger("HitFront");
     }
 
     private void LateUpdate()
     {
-        _currentSpeed = Mathf.Lerp(_currentSpeed, _mover.MovingPower, Time.deltaTime * _speedChangingSpeed);
+        _currentSpeed = Mathf.Lerp(_currentSpeed, _mover.CurrentSpeed, Time.deltaTime * _speedChangingSpeed);
         _animator.SetFloat("Speed", _currentSpeed);
+        _animator.SetFloat("RunAnimationSpeed", 1 + _mover.CurrentBoost * _maxRunAnimationSpeedBoost);
     }
 
 
