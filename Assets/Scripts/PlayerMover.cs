@@ -23,7 +23,7 @@ public class PlayerMover : MonoBehaviour
         get
         {
             if (_attacker.IsAttacking == false)
-                return _inputVector.magnitude * _booster.CurrentSpeed;
+                return (_inputVector.magnitude * _booster.CurrentSpeed);
             else
                 return _booster.CurrentSpeed;
         }
