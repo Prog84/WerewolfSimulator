@@ -10,7 +10,8 @@ public class Boss : MonoBehaviour
     [SerializeField] private ParticleSystem _pRightRainbow;
     [SerializeField] private ParticleSystem _onHitBlood;
     [SerializeField] private AttackState _attackState;
-    private int _countWolves = 0;
+    private int _countHit = 0;
+    private int _hitToDie = 4;
     private StateMachine _state;
     private SoldierAnimator _animator;
     private List<Wolf> _wolves;
@@ -26,7 +27,7 @@ public class Boss : MonoBehaviour
 
     public void AttackBoss()
     {
-        if (_countWolves == 0)
+        if (_countHit == 0)
         {
             _wolves.AddRange(FindObjectsOfType<Wolf>());
         }
@@ -35,9 +36,9 @@ public class Boss : MonoBehaviour
 
     private IEnumerator Attack()
     {
-        if (_countWolves == 4)
+        if (_countHit == _hitToDie)
         {
-            _countWolves++;
+            _countHit++;
             _animator.Fall();
             Time.timeScale = 0.2f;
             _state.enabled = false;
@@ -48,9 +49,9 @@ public class Boss : MonoBehaviour
             _pLeftRainbow.Play();
             _pRightRainbow.Play();
         } 
-        else if (_countWolves < 4)
+        else if (_countHit < _hitToDie)
         {
-            _countWolves++;
+            _countHit++;
             _animator.Damage();
             Instantiate(_onHitBlood, transform.position + Vector3.up, Quaternion.LookRotation(transform.forward));
         }  

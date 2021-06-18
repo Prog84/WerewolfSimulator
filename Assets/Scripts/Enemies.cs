@@ -18,6 +18,7 @@ public class Enemies : MonoBehaviour
     private List<Wolf> _wolfies;
     private float _enemiesDied;
     private bool _isFinish = false;
+    private int _finalEnemiesCount = 4;
 
     public event UnityAction<float> Died;
 
@@ -51,7 +52,7 @@ public class Enemies : MonoBehaviour
         Died?.Invoke(_enemiesDied);
         _player.RiseRage(1);
         _effectSpawner.SpawnPopup(_killEffect, enemy.transform.position);
-        if (_enemies.Count == 4)
+        if (_enemies.Count == _finalEnemiesCount)
         {
             for (int i = 0; i < _wolfies.Count; i++)
             {
