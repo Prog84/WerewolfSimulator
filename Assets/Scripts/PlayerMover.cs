@@ -2,18 +2,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(PlayerSpeedBooster))]
 [RequireComponent(typeof(PlayerAttacker))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerMover : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _rotateSpeed;
     [SerializeField] private float _minSpeed;
     [SerializeField] private PlayerInput _input;
+    [SerializeField] private Enemies _enemies;
 
     private PlayerSpeedBooster _booster;
     private PlayerAttacker _attacker;
+    private Boss _boss;
+    private Animator _animator;
+    private bool _coolDown = false;
+    private bool _isBoss = false;
+    private int _numberHitsBoss = 0;
+    private Rigidbody _rigidbody;
 
     public float CurrentBoost => _booster.CurrentBoost;
     public float CurrentMovingSpeed => CurrentSpeedModifier * _moveSpeed;
@@ -35,22 +44,57 @@ public class PlayerMover : MonoBehaviour
     {
         _booster = GetComponent<PlayerSpeedBooster>();
         _attacker = GetComponent<PlayerAttacker>();
+        _boss = FindObjectOfType<Boss>();
+        _animator = GetComponent<Animator>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     private void Update()
     {
-        if (IsMoving)
+        if (_enemies._enemies.Count > 0 && _isBoss == false)
         {
-            Move();
+            if (IsMoving)
+            {
+                Move();
+            }
+            if (_attacker.IsAttacking)
+            {
+                RotateTo(_attacker.CurrentTarget);
+            }
+            else if (_inputVector.magnitude > _minSpeed && _input.IsON)
+            {
+                RotateTo(_inputVector);
+            }
         }
-        if (_attacker.IsAttacking)
+
+        if (Input.GetMouseButtonDown(1) && _numberHitsBoss < 5)
         {
-            RotateTo(_attacker.CurrentTarget);
+            _rigidbody.isKinematic = true;
+            if (_coolDown == false)
+            {
+                if (_numberHitsBoss < 5)
+                {
+                    _numberHitsBoss++;
+                    StartCoroutine(Attack());
+                }
+            }
         }
-        else if (_inputVector.magnitude > _minSpeed && _input.IsON)
+
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            RotateTo(_inputVector);
+            _animator.SetTrigger("AttackFast");
         }
+    }
+
+    private IEnumerator Attack()
+    {
+        _coolDown = true;
+        _boss.AttackBoss();
+        yield return new WaitForSeconds(0.1f);
+        _animator.SetFloat("RunAnimationSpeed", 0f);
+        _animator.SetTrigger("AttackSlow");
+        yield return new WaitForSeconds(1f);
+        _coolDown = false;
     }
 
     private void Move()

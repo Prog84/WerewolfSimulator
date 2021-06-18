@@ -17,6 +17,11 @@ public class SoldierAnimator : MonoBehaviour
         _animator.SetTrigger("Fall");
     }
 
+    public void Damage()
+    {
+        _animator.SetTrigger("TakeDamage");
+    }
+
     public void Grabbed()
     {
         _animator.SetTrigger("Grabbed");
@@ -53,7 +58,7 @@ public class SoldierAnimator : MonoBehaviour
 
     public void SetAiming(bool value)
     {
-        if (_animator != null) 
+        if (_animator != null)
             _animator.SetBool("Aiming", value);
     }
 }

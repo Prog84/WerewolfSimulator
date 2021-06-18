@@ -57,7 +57,8 @@ public class PlayerAnimator : MonoBehaviour
     {
         _animator.SetBool("Side", isLeftSide);
         if (speed == PlayerAttacker.AttackSpeed.Slow)
-            _animator.SetTrigger("AttackSlow");
+            //_animator.SetTrigger("AttackSlow");
+            _animator.SetTrigger("AttackFast");
         if (speed == PlayerAttacker.AttackSpeed.Fast)
             _animator.SetTrigger("AttackFast");
     }

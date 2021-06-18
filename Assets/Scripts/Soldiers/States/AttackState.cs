@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Soldier))]
@@ -14,6 +15,10 @@ public class AttackState : State
     private Soldier _soldier;
     private UnitMover _mover;
     private CapsuleCollider _targetBody;
+    private Vector3 _targetPosition;
+    private bool _isRotate = false;
+
+    public event UnityAction DieWolf;
 
     private void Awake()
     {
@@ -30,6 +35,7 @@ public class AttackState : State
         {
             if (Target.TryGetComponent(out CapsuleCollider body))
                 _targetBody = body;
+            _isRotate = _mover.RotateTo(_soldier.Target.transform.position);
         }
     }
 
@@ -40,15 +46,18 @@ public class AttackState : State
 
     private void Update()
     {
-        Vector3 targetPosition;
         if (_targetBody == null)
-            targetPosition = _soldier.Target.transform.position;
+            _targetPosition = _soldier.Target.transform.position;
         else
-            targetPosition = _targetBody.bounds.center;
-        _mover.RotateTo(targetPosition);
-        if (_lastAttackTime <= 0)
         {
-            Attack(targetPosition);
+            _targetPosition = _targetBody.bounds.center;
+            //StartCoroutine(WaitRotation());
+        }
+        _isRotate = false;
+        _isRotate = _mover.RotateTo(_targetPosition);
+        if (_lastAttackTime <= 0 && _isRotate == true)
+        {
+            Attack(_targetPosition);
             _lastAttackTime = _delay;
         }
 
@@ -58,5 +67,14 @@ public class AttackState : State
     private void Attack(Vector3 target)
     {
         _soldier.Shoot(target);
+        DieWolf?.Invoke();
     }
+
+    /*private IEnumerator WaitRotation()
+    {
+        _isRotate = false;
+        _mover.RotateTo(_targetPosition);
+        yield return new WaitForSeconds(1f);
+        _isRotate = true;
+    }*/
 }

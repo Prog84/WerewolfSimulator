@@ -11,7 +11,7 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
-        transform.Translate(transform.forward.normalized * _speed * Time.deltaTime, Space.World);
+        //transform.Translate(transform.forward.normalized * _speed * Time.deltaTime, Space.World);
         _lifeTime -= Time.deltaTime;
         if (_lifeTime < 0)
             Destroy(gameObject);

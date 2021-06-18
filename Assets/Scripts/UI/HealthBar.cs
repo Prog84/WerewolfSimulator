@@ -4,21 +4,24 @@ using UnityEngine;
 
 public class HealthBar : Bar
 {
-    [SerializeField] private Player _player;
+    //[SerializeField] private Player _player;
+    [SerializeField] private Enemies _enemies;
 
     void Start()
     {
-        _maxValue = _player.MaxHP;
-        OnValueChanged(_maxValue);
+        _maxValue = _enemies._enemies.Count;//_player.MaxHP;
+        OnValueChanged(0);
     }
 
     private void OnEnable()
     {
-        _player.HealthChanged += OnValueChanged;
+        _enemies.Died += OnValueChanged;
+        //_player.HealthChanged += OnValueChanged;
     }
 
     private void OnDisable()
     {
-        _player.HealthChanged -= OnValueChanged;
+        _enemies.Died += OnValueChanged;
+        //_player.HealthChanged -= OnValueChanged;
     }
 }

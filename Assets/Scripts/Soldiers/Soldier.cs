@@ -51,7 +51,7 @@ public class Soldier : MonoBehaviour
 
     public void SetAiming(bool value)
     {
-        if (_animator!=null)
+        if (_animator != null)
             _animator.SetAiming(value);
     }
 
@@ -89,9 +89,29 @@ public class Soldier : MonoBehaviour
 
     public void Hit(Vector3 attacker)
     {
+        if (TryGetComponent(out Boss boss))
+            return;
         Die();
         _animator.Fall();
-        transform.rotation =  Quaternion.LookRotation(attacker - transform.position);
-        Instantiate(_onHitBlood, transform.position + new Vector3(0,attacker.y,0), Quaternion.LookRotation(transform.forward));
+        transform.rotation = Quaternion.LookRotation(attacker - transform.position);
+        Instantiate(_onHitBlood, transform.position + Vector3.up/*+ new Vector3(0, attacker.y, 0)*/, Quaternion.LookRotation(transform.forward));
+        //Instantiate(_onHitBlood, transform.position + Vector3.up, Quaternion.LookRotation(transform.forward));
+        gameObject.SetActive(false);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent(out Wolf wolf))
+        {
+            Hit(wolf.transform.position);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.TryGetComponent(out Wolf wolf))
+        {
+            Hit(wolf.transform.position);
+        }
     }
 }

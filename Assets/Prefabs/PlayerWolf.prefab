@@ -1847,10 +1847,11 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 601c40af49ac4ab49ab48b401b8f20e7, type: 3}
+  - {fileID: 2100000, guid: 4d7bf62d5423df44db00e2bb9d8cc45e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2106,7 +2107,7 @@ GameObject:
   - component: {fileID: 8714474855044719011}
   - component: {fileID: 8714474855044719010}
   m_Layer: 8
-  m_Name: Player 1
+  m_Name: PlayerWolf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2173,7 +2174,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4589b8428f96ac84393941536b730daf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _MaxHP: 10000
+  _maxHP: 0
+  _maxRage: 0
+  _healthRegenTime: 0
+  _RageDecay: 0
 --- !u!95 &8714474855044719013
 Animator:
   serializedVersion: 3
@@ -2219,6 +2223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94398cae50e8ef842bec1b18bd00ba53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _maxRunAnimationSpeedBoost: 0
 --- !u!114 &8714474855044719012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2238,6 +2243,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   _playerTargeter: {fileID: 6445902027570306087}
+  _rotationPoint: {fileID: 0}
 --- !u!114 &8714474855044719011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2266,6 +2272,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _clawRight: {fileID: 8715879811683378648}
   _clawLeft: {fileID: 6445902028330385016}
+  _attacks: []
+  _runAttackTime: 0
 --- !u!1001 &6445902028598522984
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2667,12 +2675,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1f2335677f8cd3449d5220531a4d943, type: 3}
---- !u!4 &6445902028330385017 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2414341977781260721, guid: a1f2335677f8cd3449d5220531a4d943,
-    type: 3}
-  m_PrefabInstance: {fileID: 8715879811415633864}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6445902028330385016 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2414341977781260720, guid: a1f2335677f8cd3449d5220531a4d943,
@@ -2685,3 +2687,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 423cfd19c49011b4b8136b424dc54dcf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &6445902028330385017 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2414341977781260721, guid: a1f2335677f8cd3449d5220531a4d943,
+    type: 3}
+  m_PrefabInstance: {fileID: 8715879811415633864}
+  m_PrefabAsset: {fileID: 0}

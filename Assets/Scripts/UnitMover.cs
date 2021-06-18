@@ -12,7 +12,7 @@ public class UnitMover : MonoBehaviour
 
     private Vector3 _targetPosition;
     private Quaternion _targetRotation;
-    private float _distanseCheck = 0.3f;
+    private float _distanseCheck = 1.3f;
     private float _rotationCheck = 5f;
     private Coroutine _patrolling;
 
@@ -38,11 +38,12 @@ public class UnitMover : MonoBehaviour
         _targetPosition = targetPosition;
         RotateTo(targetPosition);
     }
-    public void RotateTo(Vector3 targetPosition)
+    public bool RotateTo(Vector3 targetPosition)
     {
         var direction = (targetPosition - transform.position).normalized;
         direction.y = 0;
         _targetRotation = Quaternion.LookRotation(direction);
+        return true;
     }
 
     public void Stop()
@@ -63,7 +64,7 @@ public class UnitMover : MonoBehaviour
     {
         while (path.Length > 0)
         {
-            for (var i = 0; i<path.Length; i++)
+            for (var i = 0; i < path.Length; i++)
             {
                 MoveTo(path[i]);
                 while (IsMoving)

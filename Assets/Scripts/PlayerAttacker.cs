@@ -101,6 +101,7 @@ public class PlayerAttacker : MonoBehaviour
         SetClaws(false, false);
         yield return new WaitForSeconds(attack.PauseTargetHit);
         target.Hit(transform.position);
+        transform.localScale += new Vector3(0.07f, 0.07f, 0.07f);
         IsAttacking = false;
         _currentTarget = null;
         _attackSpeed = 0;
